@@ -120,10 +120,6 @@
             }
         }
         
-        public function getUser($id) {
-            
-        }
-        
         public function setPrivilege($id, $priv) {
             
         }

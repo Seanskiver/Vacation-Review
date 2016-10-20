@@ -1,0 +1,16 @@
+.card-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.card-block>a {
+    line-height: 1em;
+}
+
+.card-block>i {
+    margin-right: 5px;
+}
+
+.card-title {
+    margin-top: auto;
+}

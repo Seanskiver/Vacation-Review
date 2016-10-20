@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS vacation (
 
 -- Review table 
 CREATE TABLE IF NOT EXISTS review (
-    id INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     vac_id INT NOT NULL,
     title VARCHAR(250),
@@ -59,9 +59,21 @@ CREATE TABLE IF NOT EXISTS review (
 DELIMITER //
 CREATE PROCEDURE `get_vacations` ()
 BEGIN 
-   SELECT name, location_lat, location_lon, img, description,  
+   SELECT v.id, v.name, v.location_lat, v.location_lon, v.img, v.description,  
+   ( SELECT AVG(rating) FROM review ) avg_rating,
+   ( SELECT COUNT(*) FROM review WHERE vac_id = v.id ) num_reviews
+   FROM vacation as v;
+END//
+DELIMITER ;
+
+-- get one vacation
+DELIMITER //
+CREATE PROCEDURE `get_one_vacation` (IN arg_id INT)
+BEGIN 
+   SELECT id, name, location_lat, location_lon, img, description,  
    ( SELECT AVG(rating) FROM review ) avg_rating
-   FROM vacation;
+   FROM vacation
+   WHERE id = arg_id;
 END//
 DELIMITER ;
 
@@ -77,7 +89,7 @@ DELIMITER ;
 
 -- Edit Vacation 
 DELIMITER //
-CREATE PROCEDURE `edit_vacation` (IN arg_id INT, IN arg_img VARCHAR(250), IN arg_description TEXT)
+CREATE PROCEDURE `edit_vacation` (IN arg_id INT, IN arg_name VARCHAR(250), IN arg_img VARCHAR(250), IN arg_description TEXT)
 BEGIN 
     UPDATE vacation 
     SET name = arg_name, img = arg_img, description = arg_description
@@ -134,12 +146,19 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `get_vacation_reviews` (IN arg_vac_id INT) 
 BEGIN 
-   SELECT r.*, v.title, v.name, v.location_lat, v.location_lon, v.img, v.description,
-   ( SELECT AVG(rating) FROM review ) avg_rating
-   FROM reviews as r
-   INNER JOIN vacation as v
-   ON r.vac_id = v.id
+   SELECT *
+   FROM review
    WHERE vac_id = arg_vac_id;
+END//
+DELIMITER ;
+
+
+
+-- Get user reviews 
+DELIMITER //
+CREATE PROCEDURE `get_user_reviews` (IN arg_user_id INT) 
+BEGIN 
+    SELECT * FROM review WHERE user_id = arg_user_id;
 END//
 DELIMITER ;
 
@@ -154,10 +173,11 @@ DELIMITER ;
 
 -- Edit review 
 DELIMITER //
-CREATE PROCEDURE `edit_review` (IN arg_user_id INT, IN arg_vac_id INT, IN arg_title VARCHAR(250), IN arg_body TEXT, IN arg_rating DOUBLE) 
+CREATE PROCEDURE `edit_review` (IN arg_id INT, IN arg_title VARCHAR(250), IN arg_body TEXT, IN arg_rating DOUBLE) 
 BEGIN 
-   INSERT INTO review (user_id, vac_id, title, body, rating) 
-   VALUES (arg_user_id, arg_vac_id, arg_title, arg_body, arg_rating);
+    UPDATE review 
+    SET title = arg_title, body = arg_body, rating = arg_rating
+    WHERE id = arg_id;
 END//
 DELIMITER ;
 

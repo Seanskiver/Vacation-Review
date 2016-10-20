@@ -2,17 +2,25 @@
     // maintain sesssion
     session_start();
     
-    if (!empty($_SESSION)) {
-        print_r($_SESSION)."<br>";
-        echo "<a href='logout.php'>Logout</a>";
-    } else {
-        echo "<a href='/login/'>Login</a><br>";
-        echo "<a href='/signup/'>Sign up</a>";
-    }
-    echo "<br/>";
+    // Model Includes 
+    require_once('models/vacation.php');
+    $rootDir = $_SERVER['DOCUMENT_ROOT'];
+    // action
+    $action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : '';    
     
-    echo "<a href='/vacation/'>Add a vacation spot</a>";
+    include $rootDir.'/views/header.php';
 
     
+    switch($action) {
+        default: 
+            $vacation = new Vacation();
+            
+            $vacations = $vacation->getVacations();
+            include 'views/vacations.php';
+            break;
+            
+    }
+    
+include $rootDir.'/views/footer.php';
 
 ?>

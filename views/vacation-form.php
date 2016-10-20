@@ -15,3 +15,8 @@
 <?php if (isset($error)) : ?>
     <span class="error"><?= $error ?></span>
 <?php endif; ?>
+
+<?php if (isset($exists)) : ?>
+    <span>That vacation spot already exists </span>
+    <a href=".?action=view_vacation&vacId=<?= $exists['id'] ?>">review it now</a> 
+<?php endif; ?>

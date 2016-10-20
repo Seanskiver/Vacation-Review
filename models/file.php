@@ -46,7 +46,7 @@
 			
 			move_uploaded_file($file['tmp_name'], $this->upload_dir.$uniqueName);
 			
-			return upload_dir.$uniqueName;
+			return $uniqueName;
 		}
 		
 		public function get_images() {

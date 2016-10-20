@@ -28,5 +28,28 @@ class Gateway {
         // return instance of self if instance already set
         return self::$instance;
     }
+    
+    public function bindParams($sql, $params) {
+        $gateway = Gateway::getInstance();
+        $stmt = $gateway->dbh->prepare($sql);
+        
+        foreach ($params as $p => &$v) $stmt->bindParam($p, $v);
+        
+        try { $stmt->execute(); } 
+        catch (PDOException $e) { throw new Exception($e->getMessage()); }
+        
+        $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        if (count($result) == 1) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = $stmt->fetchAll();
+        }
+
+        if (!empty($result)) {
+            return $result;
+        }
+    }
+
 }
 ?>
